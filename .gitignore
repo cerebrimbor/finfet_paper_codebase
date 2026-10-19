@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+.DS_Store
+
+# third-party simulator distribution (see device_provenance/README.md)
+*.7z
+ngspice-46_64/
+
+_baseline/

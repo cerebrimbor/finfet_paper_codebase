@@ -1,0 +1,10 @@
+numpy>=2.0
+scipy>=1.11
+pytest>=7.4
+matplotlib>=3.8
+
+# optional: only needed for the HDF5 export in export.py
+h5py>=3.10
+
+# only needed for scripts/verify_covariance_identity.py
+sympy>=1.12
