@@ -1,4 +1,4 @@
-# finfet-paper_codebase
+# finfet_paper_codebase
 
 Code, data and figures for a manuscript on adjacent-dwell correlation in
 random-telegraph noise (RTN): when the correlation between successive filled
@@ -20,9 +20,8 @@ and empty dwell times detects hidden trap sub-states, and when it misses them.
 Python 3.10 or later.
 
 ```bash
-git clone https://github.com/cerebrimbor/finfet-paper_model_datas.git
-cd finfet-paper_model_datas
-pip install -r requirements.txt
+  git clone https://github.com/cerebrimbor/finfet_paper_codebase.git
+  cd finfet_paper_codebase
 ```
 
 ## Run
