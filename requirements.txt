@@ -8,3 +8,6 @@ h5py>=3.10
 
 # only needed for scripts/verify_covariance_identity.py
 sympy>=1.12
+
+# optional: only for scripts/continuous_trajectory_power.py
+numba>=0.58

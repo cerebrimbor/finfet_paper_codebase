@@ -1,12 +1,11 @@
 # Is the chain uniquely identified, or is some degenerate partner invisible?
 #
-# max |rho| says how little data you need in the best case. min |rho| decides the
-# strength of the claim:
-#   inf|rho| > 0  ->  every reversible degenerate partner is detectably
-#                     correlated; the chain is uniquely identified by the 2-D
-#                     statistic.
-#   inf|rho| = 0  ->  some partner is invisible to the correlation test; the
-#                     claim must narrow to a rank test on the binned joint.
+# max |rho| says how little data you need in the best case. The infimum of
+# |rho| over the rank-2 reversible partners decides how strong a claim
+# correlation can support. For CHAIN that infimum is zero (see
+# test_no_positive_lower_bound_on_rho_among_rank_two_partners): the partners
+# form a segment through the rank-1 product coupling, so correlation separates
+# rank 1 from rank 2 only at exact zero and offers no finite-record guarantee.
 
 import numpy as np
 import pytest
@@ -14,8 +13,10 @@ import pytest
 from stochastic_ctmc.generator import n_state_generator, is_detailed_balance
 from stochastic_ctmc.dwell import joint_density_rank, gateway_block_rank
 from stochastic_ctmc.topology import (
-    extremal_correlation_reversible, LEVELS_4,
+    extremal_correlation_reversible, LEVELS_4, coupling_from_generator,
+    bipartite_generator_from_coupling, _marginal_signature,
 )
+from stochastic_ctmc.correlation import analytic_adjacent_moments
 from stochastic_ctmc.correlation import pairs_needed
 
 CHAIN = n_state_generator(
@@ -67,26 +68,37 @@ def test_report_correlation_range_over_the_manifold():
 
 
 @pytest.mark.slow
-def test_worst_case_partner_is_still_detectable():
-    """The lowest-|rho| reversible partner found by the search still has joint
-    rank 2 and a correlation large enough to measure.
+def test_no_positive_lower_bound_on_rho_among_rank_two_partners():
+    """inf |rho| over the rank-2 reversible partners of CHAIN is zero.
+
+    Replaces test_worst_case_partner_is_still_detectable, which asserted
+    |rho| > 1e-4 at the optimiser's minimum. That bound held only because the
+    SLSQP search stops at |rho| ~ 1.4e-3; it is not a property of the family.
+    In the coupling chart the bipartite partners of CHAIN are the segment
+    W(t) = W0 + t (W - W0) of the K(2,2) transportation polytope, which passes
+    through the product coupling W0 at t = 0. The 1-D marginals depend on W only
+    through pi and the margins D, K, so every W(t) is marginal-equivalent;
+    Cov = det(W)(mE0-mE1)(mF0-mF1)/C^2 and det W(t) = t det W, so rho is linear
+    in t and the joint stays rank 2 for every t != 0. This is the manuscript's
+    statement (Sec. III.A) that no positive universal lower bound on |rho|
+    exists: correlation separates rank 1 from rank 2 only at exact zero.
     """
     lo = extremal_correlation_reversible(CHAIN, LEVELS, sense="min", n_samples=200)
     assert lo.success
-
-    # The rank difference survives even at the correlation minimum.
     assert joint_density_rank(CHAIN, LEVELS) == 1
     assert joint_density_rank(lo.Q, LEVELS) == 2
+    print(f"\noptimiser minimum |rho| = {abs(lo.rho):.3e} "
+          f"({pairs_needed(lo.rho, n_sigma=5.0):,} pairs @ 5 sigma)")
 
-    n_req = pairs_needed(lo.rho, n_sigma=5.0)
-    print(f"\nworst-case rho = {lo.rho:+.6f}, needs {n_req:,} pairs @ 5 sigma")
-    print(f"Q_worst =\n{np.array2string(lo.Q, precision=4)}")
-
-    assert abs(lo.rho) > 1e-4, (
-        f"inf|rho| ~= {lo.rho:.2e}: some reversible degenerate partner is "
-        "effectively invisible to the correlation test. The joint still differs "
-        "in RANK -- switch the detector to a rank test on the binned joint and "
-        "narrow the claim."
-    )
-    assert n_req < 50_000_000, f"{n_req:,} pairs is not a feasible experiment"
-
+    pi_E, pi_F, W = coupling_from_generator(lo.Q, LEVELS)
+    W0 = np.outer(W.sum(axis=1), W.sum(axis=0)) / W.sum()
+    sig = _marginal_signature(lo.Q, LEVELS)
+    for t in (1e-1, 1e-3, 1e-5):
+        Q_t = bipartite_generator_from_coupling(pi_E, pi_F, W0 + t * (W - W0))
+        rho_t = analytic_adjacent_moments(Q_t, LEVELS, 1).rho
+        assert is_detailed_balance(Q_t, atol=1e-10)
+        assert np.max(np.abs(_marginal_signature(Q_t, LEVELS) - sig)) < 1e-9
+        assert joint_density_rank(Q_t, LEVELS) == 2
+        assert rho_t == pytest.approx(t * lo.rho, rel=1e-6)
+    # Smallest t checked: |rho| is two orders below the old 1e-4 "bound".
+    assert abs(rho_t) < 1e-6
