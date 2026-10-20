@@ -1,4 +1,4 @@
-# finfet-paper_model_datas
+# finfet-paper_codebase
 
 Code, data and figures for a manuscript on adjacent-dwell correlation in
 random-telegraph noise (RTN): when the correlation between successive filled
