@@ -1,6 +1,6 @@
 # finfet_paper_codebase
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.CONCEPT_ID.svg)](https://doi.org/10.5281/zenodo.23766567)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23766567.svg)](https://doi.org/10.5281/zenodo.23766567)
 
 Code, data and figures for a manuscript on adjacent-dwell correlation in
 random-telegraph noise (RTN): when the correlation between successive filled
@@ -10,7 +10,7 @@ and empty dwell times detects hidden trap sub-states, and when it misses them.
 
 Kaustubh Chaturvedi, *Detecting Hidden Trap States from Adjacent Dwell Times
 in FinFET Random-Telegraph Noise*, preprint, Zenodo (2026).
-https://doi.org/10.5281/zenodo.CONCEPT_ID
+https://doi.org/10.5281/zenodo.23766567
 
 ## Layout
 
@@ -58,7 +58,7 @@ If you use this code, please cite the paper:
                {FinFET} Random-Telegraph Noise},
   year      = {2026},
   publisher = {Zenodo},
-  doi       = {10.5281/zenodo.CONCEPT_ID},
+  doi       = {10.5281/zenodo.23766567},
   note      = {Preprint}
 }
 ```
