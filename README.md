@@ -1,6 +1,6 @@
 # finfet_paper_codebase
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.CONCEPT_ID.svg)](https://doi.org/10.5281/zenodo.CONCEPT_ID)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.CONCEPT_ID.svg)](https://doi.org/10.5281/zenodo.23766567)
 
 Code, data and figures for a manuscript on adjacent-dwell correlation in
 random-telegraph noise (RTN): when the correlation between successive filled
